@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "copper_chimney",
+  "pattern": [
+    "   ",
+    "I I",
+    "BCB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:copper_block"
+    },
+    "I": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "tag": "minecraft:coals"
+    }
+  },
+  "result": {
+    "item": "sootychimneys:copper_chimney"
+  }
+}

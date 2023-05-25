@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "sootychimneys",
+  "version": "${version}",
+  "name": "Sooty Chimneys for Fabric",
+  "description": "Unofficial port of Sooty Chimneys to Fabric.",
+  "authors": [
+    "otomir23",
+    "mortuusars"
+  ],
+  "contact": {
+    "repo": "https://github.com/otomir23/SootyChimneysFabric"
+  },
+  "license": "MIT",
+  "icon": "assets/sootychimneys/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "me.otomir23.sootychimneys.client.SootyChimneysClient"
+      }
+    ],
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "me.otomir23.sootychimneys.SootyChimneys"
+      }
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": ">=${fabric_version}",
+    "minecraft": "${minecraft_version}",
+    "fabric-language-kotlin": ">=${fabric_kotlin_version}"
+  },
+  "suggests": {
+    "create": "${create_version}"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "block.sootychimneys.brick_chimney": "Кирпичный дымоход",
+  "block.sootychimneys.copper_chimney": "Медный домоход",
+  "block.sootychimneys.dirty_brick_chimney": "Грязный кирпичный дымоход",
+  "block.sootychimneys.dirty_copper_chimney": "Грязный медный дымоход",
+  "block.sootychimneys.dirty_stone_brick_chimney": "Грязный дымоход из каменного кирпича",
+  "block.sootychimneys.dirty_terracotta_chimney": "Грязный терракотовый дымоход",
+  "block.sootychimneys.stone_brick_chimney": "Дымоход из каменного кирпича",
+  "block.sootychimneys.terracotta_chimney": "Терракотовый дымоход",
+  "message.sootychimneys.blocked": "Выход дыма заблокирован",
+  "message.sootychimneys.open": "Выход дыма возобновлён",
+  "sootychimneys.midnightconfig.title": "Sooty Chimneys",
+  "sootychimneys.midnightconfig.smokeStrength": "Сила дыма",
+  "sootychimneys.midnightconfig.smokeStrength.tooltip": "Шанс спавна частицы дыма.\n1.0 - точно заспавнится.\n0.0 - нет дыма.",
+  "sootychimneys.midnightconfig.dirtyChance": "Шанс загрязнения",
+  "sootychimneys.midnightconfig.dirtyChance.tooltip": "Дымоходы могут загрязнится на случайном тике. (Если они включены и не заблокированы.)\nЭтот параметр контролирует какова вероятность этого.\n1.0 - загрязнится на следующем случайном тике.\n0.0 - никогда не загрязнится.",
+  "sootychimneys.midnightconfig.windEnabled": "Включить ветер",
+  "sootychimneys.midnightconfig.windEnabled.tooltip": "Включение/выключение ветра у частиц дыма.",
+  "sootychimneys.midnightconfig.windStrengthMultiplier": "Сила ветра",
+  "sootychimneys.midnightconfig.windStrengthMultiplier.tooltip": "Насколько сильно ветер влияет на дым."
+}
