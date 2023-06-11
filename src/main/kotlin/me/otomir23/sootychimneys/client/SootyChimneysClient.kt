@@ -1,10 +1,12 @@
 package me.otomir23.sootychimneys.client
 
+import me.otomir23.sootychimneys.core.WindGetter
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 
 @Suppress("unused")
 object SootyChimneysClient : ClientModInitializer {
     override fun onInitializeClient() {
-        // No client code, but I will save the entrypoint for later
+        ClientTickEvents.START_WORLD_TICK.register(WindGetter.getWorldTickHandler())
     }
 }
