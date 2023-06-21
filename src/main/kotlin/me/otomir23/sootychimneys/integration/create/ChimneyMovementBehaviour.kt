@@ -1,7 +1,7 @@
 package me.otomir23.sootychimneys.integration.create
 
-import com.simibubi.create.content.contraptions.components.structureMovement.MovementBehaviour
-import com.simibubi.create.content.contraptions.components.structureMovement.MovementContext
+import com.simibubi.create.content.contraptions.behaviour.MovementBehaviour
+import com.simibubi.create.content.contraptions.behaviour.MovementContext
 import me.otomir23.sootychimneys.block.ChimneyBlock
 import me.otomir23.sootychimneys.config.CommonConfig
 import net.minecraft.core.BlockPos
