@@ -53,15 +53,15 @@ tasks.processResources {
     }
 }
 
-val targetJavaVersion = 17
+// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+val targetJavaVersion = JavaVersion.VERSION_17
 tasks.withType<JavaCompile>().configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     // If Javadoc is generated, this must be specified in that task too.
     options.encoding = "UTF-8"
-    // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-    options.release.set(17)
+    options.release.set(targetJavaVersion.ordinal + 1)
 }
 
 java {
@@ -70,8 +70,8 @@ java {
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = targetJavaVersion
+    targetCompatibility = targetJavaVersion
 }
 
 tasks.jar {
@@ -97,4 +97,4 @@ publishing {
     }
 }
 
-tasks.compileKotlin { kotlinOptions.jvmTarget = "17" }
+tasks.compileKotlin { kotlinOptions.jvmTarget = targetJavaVersion.majorVersion }
