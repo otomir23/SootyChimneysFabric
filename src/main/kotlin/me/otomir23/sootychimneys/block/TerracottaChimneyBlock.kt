@@ -4,11 +4,10 @@ import me.otomir23.sootychimneys.core.ChimneySmokeProperties.Companion.smokeProp
 import me.otomir23.sootychimneys.core.SootyChimney
 import me.otomir23.sootychimneys.setup.ModBlocks
 import net.minecraft.core.BlockPos
+import net.minecraft.world.item.DyeColor
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.material.Material
-import net.minecraft.world.level.material.MaterialColor
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -20,7 +19,8 @@ class TerracottaChimneyBlock : ChimneyBlock(
         intensity = 0.2f
         speed = 0.65f
     },
-    Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE)
+    Properties.of()
+        .mapColor(DyeColor.ORANGE)
         .sound(SoundType.DRIPSTONE_BLOCK)
         .strength(2f, 2f)
         .destroyTime(0.6f)

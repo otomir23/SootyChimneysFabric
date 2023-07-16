@@ -34,7 +34,7 @@
     "minecraft": "${minecraft_version}",
     "fabric-language-kotlin": ">=${fabric_kotlin_version}"
   },
-  "suggests": {
-    "create": "${create_version}"
+  "custom": {
+    "todo": "Add Create back when it comes out for 1.20.1"
   }
 }

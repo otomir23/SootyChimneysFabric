@@ -3,9 +3,14 @@ package me.otomir23.sootychimneys.setup
 import me.otomir23.sootychimneys.SootyChimneys.resource
 import me.otomir23.sootychimneys.block.ChimneyBlock
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.ModifyEntries
 import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.CreativeModeTabs
+import net.minecraft.world.item.ItemStack
 
 
 @Suppress("unused")
@@ -25,18 +30,23 @@ object ModItems {
     val COPPER_CHIMNEY = registerChimneyBlockItem("copper_chimney", ModBlocks.COPPER_CHIMNEY)
     val DIRTY_COPPER_CHIMNEY = registerChimneyBlockItem("dirty_copper_chimney", ModBlocks.DIRTY_COPPER_CHIMNEY)
 
-    fun init() {}
+    fun init() {
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS)
+            .register(ModifyEntries { content: FabricItemGroupEntries ->
+                content.acceptAll(CHIMNEYS.map { c -> ItemStack(c) })
+            })
+    }
 
     private fun <T : ChimneyBlock> registerChimneyBlockItem(
         registryName: String,
         block: T
     ): BlockItem {
         val registeredItem = Registry.register(
-            Registry.ITEM,
+            BuiltInRegistries.ITEM,
             resource(registryName),
             BlockItem(
                 block,
-                FabricItemSettings().group(CreativeModeTab.TAB_BUILDING_BLOCKS)
+                FabricItemSettings()
             )
         )
         CHIMNEYS.add(registeredItem)

@@ -1,6 +1,5 @@
 package me.otomir23.sootychimneys.block
 
-import com.mojang.math.Vector3f
 import me.otomir23.sootychimneys.config.CommonConfig
 import me.otomir23.sootychimneys.core.ChimneySmokeProperties
 import me.otomir23.sootychimneys.core.SootyChimney
@@ -9,13 +8,13 @@ import me.otomir23.sootychimneys.loot.ModLootTables
 import me.otomir23.sootychimneys.setup.ModBlockEntities
 import me.otomir23.sootychimneys.setup.ModTags
 import me.otomir23.sootychimneys.util.RandomOffset
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
+import net.minecraft.tags.ItemTags
 import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -34,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.phys.BlockHitResult
+import org.joml.Vector3f
 
 
 @Suppress("OVERRIDE_DEPRECATION")
@@ -79,7 +79,7 @@ open class ChimneyBlock(
         // getToolModifiedState moved here
         val tool = player.getItemInHand(hand)
         val block = state.block
-        if (!tool.isEmpty && tool.`is`(ConventionalItemTags.AXES) && block is SootyChimney && block.isDirty) {
+        if (!tool.isEmpty && tool.`is`(ItemTags.AXES) && block is SootyChimney && block.isDirty) {
             block.makeSootParticles(level, pos)
             if (!level.isClientSide) {
                 level as ServerLevel

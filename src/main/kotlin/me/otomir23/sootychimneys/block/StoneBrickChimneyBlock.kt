@@ -4,11 +4,10 @@ import me.otomir23.sootychimneys.core.ChimneySmokeProperties.Companion.smokeProp
 import me.otomir23.sootychimneys.core.SootyChimney
 import me.otomir23.sootychimneys.setup.ModBlocks
 import net.minecraft.core.BlockPos
+import net.minecraft.world.item.DyeColor
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.material.Material
-import net.minecraft.world.level.material.MaterialColor
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -19,7 +18,8 @@ class StoneBrickChimneyBlock : ChimneyBlock(
     smokePropertiesOf(0.5f, 1.2f, 0.5f, 0.025f, 0.05f, 0.025f) {
         intensity = 0.5f
     },
-    Properties.of(Material.STONE, MaterialColor.COLOR_GRAY)
+    Properties.of()
+        .mapColor(DyeColor.GRAY)
         .sound(SoundType.BASALT)
         .strength(2f, 2f)
         .destroyTime(2f)

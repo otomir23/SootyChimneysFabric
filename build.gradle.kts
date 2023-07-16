@@ -27,7 +27,7 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${prop("fabric_version")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${prop("fabric_kotlin_version")}")
 
-    modApi("com.simibubi.create:create-fabric-${prop("minecraft_version")}:${prop("create_version")}")
+    // modApi("com.simibubi.create:create-fabric-${prop("minecraft_version")}:${prop("create_version")}") TODO Create Support
     include(modImplementation("maven.modrinth:midnightlib:${prop("midnightlib_version")}")!!)!!
 }
 
@@ -42,7 +42,7 @@ tasks.processResources {
         "loader_version" to prop("loader_version"),
         "fabric_version" to prop("fabric_version"),
         "fabric_kotlin_version" to prop("fabric_kotlin_version"),
-        "create_version" to prop("create_version")
+        // "create_version" to prop("create_version") TODO Create Support
     )
     properties.forEach { (k, v) -> inputs.property(k, v) }
 

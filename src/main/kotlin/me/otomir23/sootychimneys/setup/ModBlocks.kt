@@ -3,6 +3,7 @@ package me.otomir23.sootychimneys.setup
 import me.otomir23.sootychimneys.SootyChimneys.resource
 import me.otomir23.sootychimneys.block.*
 import net.minecraft.core.Registry
+import net.minecraft.core.registries.BuiltInRegistries
 
 object ModBlocks {
     val CHIMNEYS: ArrayList<ChimneyBlock> = arrayListOf()
@@ -25,7 +26,7 @@ object ModBlocks {
         registryName: String,
         block: T
     ): T {
-        val registeredBlock = Registry.register(Registry.BLOCK, resource(registryName), block)
+        val registeredBlock = Registry.register(BuiltInRegistries.BLOCK, resource(registryName), block)
         CHIMNEYS.add(registeredBlock)
         return registeredBlock
     }
