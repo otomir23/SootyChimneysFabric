@@ -1,14 +1,32 @@
+import io.github.themrmilchmann.gradle.publish.curseforge.curseForge
+
 plugins {
     id("fabric-loom")
     `maven-publish`
     id("org.jetbrains.kotlin.jvm")
     id("com.google.devtools.ksp")
+    id("com.modrinth.minotaur")
+    id("io.github.themrmilchmann.curseforge-publish")
 }
 
 fun prop(name: String): String = project.properties[name] as String
 
 version = prop("mod_version")
 group = prop("maven_group")
+
+modrinth {
+    token.set(System.getenv("MODRINTH_TOKEN"))
+    projectId.set(prop("modrinth_project"))
+    versionType.set("beta")
+    uploadFile.set(tasks.remapJar)
+    gameVersions.add(prop("minecraft_version"))
+    dependencies {
+        required.project("fabric-api")
+        required.project("fabric-language-kotlin")
+        embedded.version("midnightlib", prop("midnightlib_version"))
+        optional.version("create-fabric", prop("create_version"))
+    }
+}
 
 repositories {
     maven("https://mvn.devos.one/snapshots/")
@@ -86,14 +104,30 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
         }
+
+        /*
+        TODO: We are using Gradle 8, support of which is planned in CurseForge Publish 0.5.0 (or 0.6.0?)
+
+        register<CurseForgePublication>("curseForge") {
+            projectID.set(prop("curseforge_project").toInt())
+            javaVersion(targetJavaVersion.majorVersion)
+            artifact {
+                changelog = Changelog("", ChangelogType.TEXT)
+                releaseType = ReleaseType.BETA
+                relations {
+                    embeddedLibrary("midnightlib")
+                    optionalDependency("create-fabric")
+                    requiredDependency("fabric-language-kotlin")
+                    requiredDependency("fabric-api")
+                }
+            }
+        }*/
     }
 
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+        curseForge {
+            apiKey.set(System.getenv("CURSEFORGE_TOKEN"))
+        }
     }
 }
 
