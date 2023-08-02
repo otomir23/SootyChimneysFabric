@@ -14,8 +14,8 @@ interface SootyChimney {
         get() = cleanVariant !== this
     val isClean: Boolean
         get() = !isDirty
-    val scrapingDropChance: Float
-        get() = 0.5f
+    val scrapingDropChance: Double
+        get() = 0.5
 
     fun makeSootParticles(level: Level, pos: BlockPos) {
         val random = level.getRandom()
@@ -25,9 +25,9 @@ interface SootyChimney {
         for (i in 0 until random.nextInt(12, 20)) {
             level.addParticle(
                 ParticleTypes.LARGE_SMOKE,
-                offset(x.toFloat(), 1.2.toFloat(), random).toDouble(),
-                offset(y.toFloat(), 1.2.toFloat(), random).toDouble(),
-                offset(z.toFloat(), 1.2.toFloat(), random).toDouble(),
+                offset(x, 1.2, random),
+                offset(y, 1.2, random),
+                offset(z, 1.2, random),
                 0.0, 0.0, 0.0
             )
         }

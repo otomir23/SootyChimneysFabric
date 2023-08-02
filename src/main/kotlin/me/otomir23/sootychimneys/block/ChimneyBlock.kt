@@ -24,8 +24,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.CampfireBlock
 import net.minecraft.world.level.block.EntityBlock
-import net.minecraft.world.level.block.RedstoneTorchBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -33,7 +33,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.phys.BlockHitResult
-import org.joml.Vector3f
+import net.minecraft.world.phys.Vec3
 
 
 @Suppress("OVERRIDE_DEPRECATION")
@@ -42,8 +42,9 @@ open class ChimneyBlock(
     properties: Properties
 ) : Block(properties), EntityBlock {
     companion object {
-        val LIT: BooleanProperty = RedstoneTorchBlock.LIT
+        val LIT: BooleanProperty = CampfireBlock.LIT
         val BLOCKED: BooleanProperty = BooleanProperty.create("blocked")
+        val SIGNAL = BooleanProperty.create("signal")
     }
 
     init {
@@ -51,6 +52,7 @@ open class ChimneyBlock(
             defaultBlockState()
                 .setValue(LIT, true)
                 .setValue(BLOCKED, false)
+                .setValue(SIGNAL, false)
         )
     }
 
@@ -58,14 +60,14 @@ open class ChimneyBlock(
         builder
             .add(LIT)
             .add(BLOCKED)
+            .add(SIGNAL)
     }
 
     /**
      * Expects a ChimneyBlock block state. May fail if not Chimney.
      */
-    fun shouldEmitSmoke(blockState: BlockState, level: Level, pos: BlockPos): Boolean {
-        return blockState.getValue(LIT) && !blockState.getValue(BLOCKED) && !level.getBlockState(pos.above())
-            .`is`(ModTags.Blocks.CHIMNEYS)
+    fun shouldEmitSmoke(blockState: BlockState): Boolean {
+        return blockState.getValue(LIT) && !blockState.getValue(BLOCKED)
     }
 
     override fun use(
@@ -86,10 +88,10 @@ open class ChimneyBlock(
                 // Offset item spawning pos, depending on clicked face, to spawn items closer to the player.
                 // Items shooting in opposite direction is not fun.
                 val faceNormal = blockHitResult.direction.normal
-                val itemSpawnPosition = Vector3f(
-                    pos.x + 0.5f + faceNormal.x * 0.65f,
-                    pos.y + 0.6f + faceNormal.y * 0.65f,
-                    pos.z + 0.5f + faceNormal.z * 0.65f
+                val itemSpawnPosition = Vec3(
+                    pos.x + 0.5 + faceNormal.x * 0.65,
+                    pos.y + 0.6 + faceNormal.y * 0.65,
+                    pos.z + 0.5 + faceNormal.z * 0.65
                 )
                 val items: List<ItemStack> = ModLootTables.getSootScrapingLootFor(state, level)
                 spawnSootScrapingItems(itemSpawnPosition, level, items)
@@ -106,15 +108,13 @@ open class ChimneyBlock(
             val messageTranslationKey = "message.sootychimneys." + if (newBlockedValue) "blocked" else "open"
             player.displayClientMessage(Component.translatable(messageTranslationKey), true)
         } else {
-            val particleOrigin = smokeProperties.particleOrigin
             val random = level.getRandom()
             for (i in 0 until random.nextInt(5)) {
                 (level as ServerLevel).sendParticles(
                     ParticleTypes.SMOKE,
-                    (
-                            pos.x + particleOrigin.x()).toDouble(),
-                    pos.y + particleOrigin.y() - 0.1,
-                    (pos.z + particleOrigin.z()).toDouble(),
+                    pos.center.x,
+                    pos.y + smokeProperties.particleOriginY - 0.1,
+                    pos.center.z,
                     1,
                     random.nextGaussian() * 0.1,
                     random.nextGaussian() * 0.1,
@@ -135,6 +135,14 @@ open class ChimneyBlock(
         return InteractionResult.sidedSuccess(level.isClientSide)
     }
 
+    private fun hasExternalBlockers(level: Level, pos: BlockPos): Boolean {
+        val hasRedstoneSignal = level.hasNeighborSignal(pos)
+        val hasChimneyAbove = level.getBlockState(pos.above()).`is`(ModTags.Blocks.CHIMNEYS)
+        return hasChimneyAbove || hasRedstoneSignal
+    }
+    
+    private fun shouldBeSignal(level: Level, pos: BlockPos) = level.getBlockState(pos.below()).`is`(ModTags.Blocks.CHIMNEYS)
+
     override fun onPlace(
         blockState: BlockState,
         level: Level,
@@ -143,17 +151,21 @@ open class ChimneyBlock(
         isMoving: Boolean
     ) {
         if (level.isClientSide) return
-        val hasRedstoneSignal = level.hasNeighborSignal(blockPos)
-        if (blockState.getValue(LIT) == hasRedstoneSignal) level.setBlock(
+
+        val hasExternalBlockers = hasExternalBlockers(level, blockPos)
+        level.setBlock(
             blockPos,
-            blockState.setValue(LIT, !hasRedstoneSignal),
+            blockState
+                .setValue(LIT, !hasExternalBlockers)
+                .setValue(SIGNAL, shouldBeSignal(level, blockPos)),
             UPDATE_ALL
         )
     }
 
     override fun getStateForPlacement(blockPlaceContext: BlockPlaceContext): BlockState? {
         return defaultBlockState()
-            .setValue(LIT, !blockPlaceContext.level.hasNeighborSignal(blockPlaceContext.clickedPos))
+            .setValue(LIT, !hasExternalBlockers(blockPlaceContext.level, blockPlaceContext.clickedPos))
+            .setValue(SIGNAL, shouldBeSignal(blockPlaceContext.level, blockPlaceContext.clickedPos))
     }
 
     override fun neighborChanged(
@@ -166,34 +178,30 @@ open class ChimneyBlock(
     ) {
         if (!level.isClientSide) level.setBlock(
             blockPos,
-            blockState.setValue(LIT, !level.hasNeighborSignal(blockPos)),
+            blockState
+                .setValue(LIT, !hasExternalBlockers(level, blockPos))
+                .setValue(SIGNAL, shouldBeSignal(level, blockPos)),
             UPDATE_CLIENTS
         )
     }
 
-    fun emitParticles(level: Level, pos: BlockPos) {
+    fun emitParticles(level: Level, pos: Vec3, state: BlockState) {
         val random = level.getRandom()
-        if (random.nextFloat() > smokeProperties.intensity) return
-        val particleOffset = smokeProperties.particleOrigin
-        val x = pos.x + particleOffset.x()
-        val y = pos.y + particleOffset.y()
-        val z = pos.z + particleOffset.z()
+        if (random.nextDouble() > smokeProperties.intensity) return
         val wind = WindGetter.wind
         val windStrengthModifier = CommonConfig.windStrengthMultiplier
         val xSpeed: Double = wind.xCoordinate * wind.strength * windStrengthModifier
         val zSpeed: Double = wind.yCoordinate * wind.strength * windStrengthModifier
         val ySpeed: Double = 0.05 * smokeProperties.speed
         val particleSpread = smokeProperties.particleSpread
-        val maxParticles = (4 * smokeProperties.intensity.coerceAtLeast(0.5f)).toInt()
+        val maxParticles = (4 * smokeProperties.intensity.coerceAtLeast(0.5)).toInt()
         for (i in 0 until random.nextInt(maxParticles)) {
-            val particleType = if (level.getBlockState(pos.below())
-                    .`is`(ModTags.Blocks.CHIMNEYS)
-            ) ParticleTypes.CAMPFIRE_SIGNAL_SMOKE else ParticleTypes.CAMPFIRE_COSY_SMOKE
+            val particleType = if (state.getValue(SIGNAL)) ParticleTypes.CAMPFIRE_SIGNAL_SMOKE else ParticleTypes.CAMPFIRE_COSY_SMOKE
             level.addAlwaysVisibleParticle(
                 particleType, true,
-                RandomOffset.offset(x, particleSpread.x(), random).toDouble(),
-                RandomOffset.offset(y, particleSpread.y(), random).toDouble(),
-                RandomOffset.offset(z, particleSpread.z(), random).toDouble(),
+                RandomOffset.offset(pos.x, particleSpread.x(), random),
+                RandomOffset.offset(pos.y - 0.5 + smokeProperties.particleOriginY, particleSpread.y(), random),
+                RandomOffset.offset(pos.z, particleSpread.z(), random),
                 xSpeed, ySpeed, zSpeed
             )
         }
@@ -223,15 +231,15 @@ open class ChimneyBlock(
         val chimney = blockState.block
         if (chimney is SootyChimney
             && chimney.isClean
-            && shouldEmitSmoke(blockState, level, pos) && random.nextDouble() < CommonConfig.dirtyChance
+            && shouldEmitSmoke(blockState) && random.nextDouble() < CommonConfig.dirtyChance
         ) {
             level.setBlock(pos, chimney.dirtyVariant.defaultBlockState(), UPDATE_CLIENTS)
         }
     }
 
-    private fun spawnSootScrapingItems(pos: Vector3f, level: ServerLevel, items: List<ItemStack>) {
+    private fun spawnSootScrapingItems(pos: Vec3, level: ServerLevel, items: List<ItemStack>) {
         for (itemStack in items) {
-            val entity = ItemEntity(level, pos.x().toDouble(), pos.y().toDouble(), pos.z().toDouble(), itemStack)
+            val entity = ItemEntity(level, pos.x(), pos.y(), pos.z(), itemStack)
             entity.spawnAtLocation(itemStack)
         }
     }

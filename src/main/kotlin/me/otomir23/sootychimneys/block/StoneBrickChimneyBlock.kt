@@ -15,8 +15,8 @@ import net.minecraft.world.phys.shapes.VoxelShape
 
 @Suppress("OVERRIDE_DEPRECATION")
 class StoneBrickChimneyBlock : ChimneyBlock(
-    smokePropertiesOf(0.5f, 1.2f, 0.5f, 0.025f, 0.05f, 0.025f) {
-        intensity = 0.5f
+    smokePropertiesOf(1.2, 0.025, 0.05, 0.025) {
+        intensity = 0.5
     },
     Properties.of()
         .mapColor(DyeColor.GRAY)

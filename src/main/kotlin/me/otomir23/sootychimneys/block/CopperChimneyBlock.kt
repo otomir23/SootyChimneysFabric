@@ -15,9 +15,9 @@ import net.minecraft.world.phys.shapes.VoxelShape
 
 @Suppress("OVERRIDE_DEPRECATION")
 class CopperChimneyBlock : ChimneyBlock(
-    smokePropertiesOf(0.5f, 1.25f, 0.5f, 0.025f, 0.05f, 0.025f) {
-        intensity = 0.5f
-        speed = 1.2f
+    smokePropertiesOf(1.25, 0.025, 0.05, 0.025) {
+        intensity = 0.5
+        speed = 1.2
     },
     Properties.of()
         .mapColor(DyeColor.ORANGE)

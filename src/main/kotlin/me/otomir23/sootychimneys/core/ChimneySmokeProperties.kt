@@ -1,40 +1,40 @@
 package me.otomir23.sootychimneys.core
 
-import org.joml.Vector3f
+import net.minecraft.world.phys.Vec3
 
 data class ChimneySmokeProperties(
-    val particleOrigin: Vector3f,
-    val particleSpread: Vector3f,
-    val intensity: Float,
-    val speed: Float
+    val particleOriginY: Double,
+    val particleSpread: Vec3,
+    val intensity: Double,
+    val speed: Double
 ) {
     companion object {
         private fun from(builder: Builder) = ChimneySmokeProperties(
-            builder.particleOrigin,
+            builder.particleOriginY,
             builder.particleSpread,
             builder.intensity,
             builder.speed
         )
 
         fun smokePropertiesOf(
-            particleOriginX: Float, particleOriginY: Float, particleOriginZ: Float,
-            particleSpreadX: Float, particleSpreadY: Float, particleSpreadZ: Float,
+            particleOriginY: Double,
+            particleSpreadX: Double, particleSpreadY: Double, particleSpreadZ: Double,
             init: Builder.() -> Unit
         ): ChimneySmokeProperties {
             val builder = Builder(
-                Vector3f(particleOriginX, particleOriginY, particleOriginZ),
-                Vector3f(particleSpreadX, particleSpreadY, particleSpreadZ)
+                particleOriginY,
+                Vec3(particleSpreadX, particleSpreadY, particleSpreadZ)
             )
             builder.init()
             return from(builder)
         }
 
         data class Builder internal constructor(
-            internal var particleOrigin: Vector3f,
-            internal var particleSpread: Vector3f
+            internal var particleOriginY: Double,
+            internal var particleSpread: Vec3
         ) {
-            internal var intensity = 1f
-            internal var speed = 1f
+            internal var intensity = 1.0
+            internal var speed = 1.0
         }
     }
 }

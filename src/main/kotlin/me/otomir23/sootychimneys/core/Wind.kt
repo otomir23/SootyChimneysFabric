@@ -7,7 +7,7 @@ import kotlin.math.sin
 
 data class Wind(
     var angleInDegrees: Double,
-    var strength: Float
+    var strength: Double
 ) {
     var xCoordinate = 0.0
         private set
@@ -16,16 +16,16 @@ data class Wind(
     private val angleInRadians: Double
         get() = angleInDegrees * (Math.PI / 180)
 
-    fun set(angleDegrees: Double, strength: Float) {
+    fun set(angleDegrees: Double, strength: Double) {
         angleInDegrees = angleDegrees
         this.strength = strength
         xCoordinate = cos(angleInRadians)
         yCoordinate = sin(angleInRadians)
     }
 
-    fun update(addDegrees: Double, addStrength: Float) {
+    fun update(addDegrees: Double, addStrength: Double) {
         angleInDegrees = (angleInDegrees + addDegrees) % 360.0
-        strength = Mth.clamp(strength + addStrength, 0.0f, 1.0f)
+        strength = Mth.clamp(strength + addStrength, 0.0, 1.0)
         xCoordinate = cos(angleInRadians)
         yCoordinate = sin(angleInRadians)
     }

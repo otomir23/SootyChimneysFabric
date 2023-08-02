@@ -20,8 +20,8 @@ class ChimneyBlockEntity (
             return BlockEntityTicker<T> { level, blockPos, blockState, _ ->
                 val chimney = blockState.block
                 if (level.getRandom().nextDouble() < CommonConfig.smokeStrength && chimney is ChimneyBlock
-                    && chimney.shouldEmitSmoke(blockState, level, blockPos)
-                ) chimney.emitParticles(level, blockPos)
+                    && chimney.shouldEmitSmoke(blockState)
+                ) chimney.emitParticles(level, blockPos.center, blockState)
             }
         }
     }

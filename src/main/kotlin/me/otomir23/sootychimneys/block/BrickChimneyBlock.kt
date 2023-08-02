@@ -15,8 +15,8 @@ import net.minecraft.world.phys.shapes.VoxelShape
 
 @Suppress("OVERRIDE_DEPRECATION")
 class BrickChimneyBlock : ChimneyBlock(
-    smokePropertiesOf(0.5f, 1f, 0.5f, 0.25f, 0.1f, 0.25f) {
-        speed = 1.2f
+    smokePropertiesOf(1.0, 0.25, 0.1, 0.25) {
+        speed = 1.2
     },
     Properties.of()
         .mapColor(DyeColor.ORANGE)
@@ -29,7 +29,7 @@ class BrickChimneyBlock : ChimneyBlock(
         get() = ModBlocks.BRICK_CHIMNEY
     override val dirtyVariant
         get() = ModBlocks.DIRTY_BRICK_CHIMNEY
-    override val scrapingDropChance = 0.75f
+    override val scrapingDropChance = 0.75
 
     override fun getShape(
         blockState: BlockState,

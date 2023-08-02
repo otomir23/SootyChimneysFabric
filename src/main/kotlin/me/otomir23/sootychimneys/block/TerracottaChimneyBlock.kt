@@ -15,9 +15,9 @@ import net.minecraft.world.phys.shapes.VoxelShape
 
 @Suppress("OVERRIDE_DEPRECATION")
 class TerracottaChimneyBlock : ChimneyBlock(
-    smokePropertiesOf(0.5f, 0.75f, 0.5f, 0.02f, 0.05f, 0.02f) {
-        intensity = 0.2f
-        speed = 0.65f
+    smokePropertiesOf(0.75, 0.02, 0.05, 0.02) {
+        intensity = 0.2
+        speed = 0.65
     },
     Properties.of()
         .mapColor(DyeColor.ORANGE)
